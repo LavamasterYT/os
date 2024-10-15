@@ -10,3 +10,20 @@ void outb(uint16_t io, uint8_t value)
     : "a"(value), "d"(io)
     );
 }
+
+uint8_t inb(uint16_t io)
+{
+    uint8_t ret;
+
+    asm volatile(
+        "in %%dx, %%al"
+        :
+        "=a"(ret)
+        :
+        "d"(io)
+        :
+        "memory"
+    );
+
+    return ret;
+}
