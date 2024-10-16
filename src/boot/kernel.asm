@@ -1,12 +1,16 @@
 BITS 16
 
-extern kernel_print_ln
-extern c_main
+section .text.startup
 
-global enter_protected_mode
-enter_protected_mode:
-    mov si, msg
-    call kernel_print_ln
+extern kernel_main
+global _start
+
+_start:
+    mov si, loaded_str
+    call print_str
+
+    mov si, protected_env
+    call print_str
 
     cli
     lgdt [gdt_descriptor]
@@ -15,8 +19,22 @@ enter_protected_mode:
     mov cr0, eax
     jmp 0x08:protected_main
 
-BITS 32
+.halt:
+    hlt
+    jmp .halt
 
+print_str:
+    mov ah, 0Eh
+.print_loop:
+    lodsb
+    test al, al
+    jz .print_done
+    int 10h
+    jmp .print_loop
+.print_done:
+    ret
+
+BITS 32
 protected_main:
     mov ax, 0x10
     mov ds, ax
@@ -33,13 +51,11 @@ protected_main:
     cmpsd
     popad
     jne .a20_off
-    jmp .halt_loop
-
+    jmp .cont
 .a20_off:
     call enable_a20
-
-.halt_loop:
-    call c_main
+.cont:
+    call kernel_main
     jmp $
     hlt
 
@@ -114,5 +130,5 @@ gdt_descriptor:
     dw gdt_end - gdt_start - 1
     dd gdt_start
 
-msg: db "Entering protected mode. . .", 0
-pmsg: db "In protected mode!", 0
+loaded_str: db "Loaded kernel!", 0x0A, 0x0D, 0
+protected_env: db "Loading protected environment. . .", 0x0A, 0x0D, 0
