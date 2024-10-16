@@ -20,9 +20,8 @@ bootloader_entry:
     mov si, loading_str
     call print_str
 
-
     mov ah, 02h ; Read sectors interrupt
-    mov al, 8 ; Sectors to read
+    mov al, 32 ; Sectors to read
     mov dl, [disk] ; Disk to read
     mov ch, 0 ; Cylinder number
     mov cl, 2 ; Starting sector, 2 because we are skipping bootloader
@@ -33,12 +32,12 @@ bootloader_entry:
     jmp 100h:0000 ; Jump to kernel
 
 print_str:
-    mov ah, 0Eh
+    mov ah, 0Eh ; Teletype char function code
 .print_loop:
-    lodsb
-    test al, al
-    jz .print_done
-    int 10h
+    lodsb ; Load byte from si to al and inc al
+    test al, al ; Is al 0 aka null character
+    jz .print_done ; End of string
+    int 10h ; Print character in al
     jmp .print_loop
 .print_done:
     ret

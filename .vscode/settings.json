@@ -5,6 +5,8 @@
         "io.h": "c",
         "stddef.h": "c",
         "vga.h": "c",
-        "memory.h": "c"
+        "memory.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c"
     }
 }

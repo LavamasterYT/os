@@ -12,14 +12,39 @@ _start:
     mov si, getting_mem
     call print_str
 
-    mov eax, 0xE820
-    mov edx, 0x534D4150
-    mov ecx, 24
-    xor ebx, ebx
+    mov ax, 0 ; Load memory map structure array to es:di
+    mov es, ax
+    lea di, [nmap]
+
+    xor ebx, ebx ; Clear ebx bit
+    mov ecx, 0 ; Counter for 256 entries on memory map
+
+.mem_loop:
+    push ecx ; Save counter value
+
+    mov eax, 0xE820 ; Function code for querying memory map
+    mov edx, 0x534D4150 ; 'SMAP'
+    mov ecx, 24 ; Size of memory map structure
+    int 15h
+    jc .err ; Error querying memory map
+
+    add di, 24 ; Increase es:di by 24, next entry
+    pop ecx ; Retrieve counter value
+    inc ecx ; Increase it
+    cmp ecx, 256 ; Is it max entries?
+    je .err ; It is, so we are done
+    test ebx, ebx ; Did the BIOS function say we are done?
+    jz .err ; Then we are
+    jmp .mem_loop
+
+.err:
+    dec ecx
+    mov [nmap_len], ecx ; Store length
 
     mov si, protected_env
     call print_str
 
+    ; Setup protected mode to run 32 bit
     cli
     lgdt [gdt_descriptor]
     mov eax, cr0
@@ -44,6 +69,7 @@ print_str:
 
 BITS 32
 protected_main:
+    ; Setting up segment registers
     mov ax, 0x10
     mov ds, ax
     mov es, ax
@@ -51,6 +77,7 @@ protected_main:
     mov gs, ax
     mov ss, ax
 
+    ; Test for a20 line
     pushad
     mov edi, 0x112345
     mov esi, 0x012345
@@ -58,14 +85,17 @@ protected_main:
     mov [edi], edi
     cmpsd
     popad
-    jne .a20_off
-    jmp .cont
-.a20_off:
-    call enable_a20
-.cont:
 
+    ; Enable a20 if necessary
+    je .a20_on
+    call enable_a20
+.a20_on:
+    ; Call kernel_main
+    mov ecx, [nmap_len]
+    push ecx
     push nmap
     call kernel_main
+    
     jmp $
     hlt
 
@@ -143,9 +173,8 @@ gdt_descriptor:
 loaded_str: db "Loaded kernel!", 0x0A, 0x0D, 0
 getting_mem: db "Getting memory. . .", 0x0A, 0x0D, 0
 got_mem: db "Got memory. . .", 0x0A, 0x0D, 0
+err_mem: db "Error getting memory", 0x0A, 0x0D, 0
 protected_env: db "Loading protected environment. . .", 0x0A, 0x0D, 0
-nmap: 
-    dq 0
-    dq 0
-    dd 0
-    dd 0
+
+nmap_len: dq 0
+nmap: times 6144 db 0
