@@ -8,7 +8,7 @@ typedef struct
 {
     uint8_t ascii;
     uint8_t color;
-} vga_cell __attribute__((packed));;
+} vga_cell __attribute__((packed));
 
 void vga_enable_cursor();
 void vga_disable_cursor();

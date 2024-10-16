@@ -9,6 +9,14 @@ _start:
     mov si, loaded_str
     call print_str
 
+    mov si, getting_mem
+    call print_str
+
+    mov eax, 0xE820
+    mov edx, 0x534D4150
+    mov ecx, 24
+    xor ebx, ebx
+
     mov si, protected_env
     call print_str
 
@@ -55,6 +63,8 @@ protected_main:
 .a20_off:
     call enable_a20
 .cont:
+
+    push nmap
     call kernel_main
     jmp $
     hlt
@@ -131,4 +141,11 @@ gdt_descriptor:
     dd gdt_start
 
 loaded_str: db "Loaded kernel!", 0x0A, 0x0D, 0
+getting_mem: db "Getting memory. . .", 0x0A, 0x0D, 0
+got_mem: db "Got memory. . .", 0x0A, 0x0D, 0
 protected_env: db "Loading protected environment. . .", 0x0A, 0x0D, 0
+nmap: 
+    dq 0
+    dq 0
+    dd 0
+    dd 0

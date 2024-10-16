@@ -4,6 +4,7 @@
         "stdint.h": "c",
         "io.h": "c",
         "stddef.h": "c",
-        "vga.h": "c"
+        "vga.h": "c",
+        "memory.h": "c"
     }
 }

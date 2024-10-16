@@ -9,10 +9,10 @@
 
 /**
  * Searches for the first occurrence of the value c in 
- * the first n bytes of the buffer pointed to.
+ * the first n bytes of the memory block pointed to by ptr.
  * 
- * @param str Pointer to buffer
- * @param c Character to find
+ * @param ptr Pointer to memory block
+ * @param c Value to find
  * @param n Number of bytes to be analyzed
  * @return Pointer to matching byte or NULL if nothing found.
  */
@@ -34,8 +34,16 @@ int memcmp(const void* ptr1, const void* ptr2, size_t n);
 
 void* memcpy(void *dest, const void* src, size_t n);
 void* memmove(void *dest, const void* src, size_t n);
-void* memset(void* str, int c, size_t n);
 char* strcat(char* dest, const char* src);
+
+/**
+ * Sets n bytes of the memory block pointed to by ptr to value.
+ * 
+ * @param ptr Pointer to the memory block
+ * @param value Value to fill memory with
+ * @param n Number of bytes to fill
+ */
+void* memset(void* ptr, int value, size_t n);
 
 /**
  * Gets the length of a null terminated string buffer.

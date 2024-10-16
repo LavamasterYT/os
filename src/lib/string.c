@@ -1,24 +1,17 @@
 #include "string.h"
 
-void* memchr(const void* str , int c, size_t n)
+void* memchr(const void* ptr , int c, size_t n)
 {
-    void* ptr = str;
-
     for (size_t i = 0; i < n; i++)
     {
-        if (*(char*)ptr == '\0') // If end of string
-            break;
-
-        if (*(char*)ptr == c)
-            return ptr;
-
-        ptr++;
+        if (((char*)ptr)[i] == c)
+            return &((char*)ptr)[i];
     }
     
     return NULL;
 }
 
-int memcmp(const void* str1, const void* str2, size_t n)
+int memcmp(const void* ptr1, const void* ptr2, size_t n)
 {
     return 0;
 }
@@ -33,7 +26,7 @@ void* memmove(void *dest, const void* src, size_t n)
     return NULL;
 }
 
-void* memset(void* str, int c, size_t n)
+void* memset(void* ptr, int c, size_t n)
 {
     return NULL;
 }
