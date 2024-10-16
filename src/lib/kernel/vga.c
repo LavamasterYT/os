@@ -1,3 +1,4 @@
+
 #include "vga.h"
 
 #include <stdint.h>
@@ -42,21 +43,15 @@ void vga_clear()
 
 void vga_write_str_at(char* input, uint8_t x, uint8_t y)
 {
-    if (input == NULL)
-    {
-        vga_set_cursor_position(x, y);
-        return;
-    }
-
     volatile vga_cell* video_mem = (vga_cell*)0xB8000;
 
     char* ptr = input;
     uint8_t offset = 0;
 
-    while (*ptr)
+    while (*ptr != '\0')
     {
         video_mem[(x + offset) + 80 * y].ascii = *ptr;
-        video_mem[(x + offset) + 80 * y].color = 0x0F;
+        video_mem[(x + offset) + 80 * y].color = 0x08;
 
         offset++;
         ptr++;
