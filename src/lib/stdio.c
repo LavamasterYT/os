@@ -41,7 +41,7 @@ int printf(const char* str, ...)
             else if (str[i] == 'c')
             {
                 hit_format = 0;
-                tty_write(va_arg(list, char));
+                tty_put(va_arg(list, char));
             }
             else if (str[i] == 'p')
             {
