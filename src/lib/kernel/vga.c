@@ -38,6 +38,8 @@ void vga_clear(vga_color bg, vga_color fg)
         video_mem[i].ascii = ' ';
         video_mem[i].color = bg << 4 | fg;
     }
+
+    vga_set_cursor_position(0, 0);
 }
 
 int vga_write_char_at(char input, uint8_t x, uint8_t y, vga_color bg, vga_color fg)
@@ -110,8 +112,6 @@ int vga_write_str_at(char *input, uint8_t x, uint8_t y, vga_color bg, vga_color 
                 break;
         }
     }
-
-    vga_set_cursor_position(xi, yi);
 
     return xi;
 }

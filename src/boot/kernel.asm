@@ -2,7 +2,10 @@ BITS 16
 
 section .text.startup
 
-extern kernel_main
+extern main
+extern tty_init
+extern init_memory
+
 global _start
 
 _start:
@@ -94,7 +97,10 @@ protected_main:
     mov ecx, [nmap_len]
     push ecx
     push nmap
-    call kernel_main
+    call init_memory
+    call tty_init
+
+    call main
     
     jmp $
     hlt

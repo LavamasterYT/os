@@ -27,6 +27,8 @@ run:
 boot.img: $(BOOTLOADER_BIN) $(KERNEL_BIN)
 	@echo "Creating boot.img..."
 	cat $(BOOTLOADER_BIN) $(KERNEL_BIN) > boot.img
+	truncate -s 1474560 boot.img
+	cp boot.img boot.vfd
 	qemu-system-x86_64 -fda boot.img -audiodev coreaudio,id=speaker -machine pcspk-audiodev=speaker
 
 # Rule to create the bootloader binary
