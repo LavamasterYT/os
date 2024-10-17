@@ -2,6 +2,7 @@
 #define MEMORY_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef struct
 {
@@ -11,6 +12,7 @@ typedef struct
     uint32_t acpi;
 } nmap __attribute__((packed));
 
-
+int init_memory(nmap* map, int len);
+void* get_next_free(size_t len);
 
 #endif

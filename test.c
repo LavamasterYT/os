@@ -5,8 +5,7 @@
 
 int main(void)
 {
-    char buffer[256];
-
-    printf("%s\n", itoa(10, buffer, 10));
+    unsigned long long int test = 0xFA;
+    printf("Writing hex numbers: 0x%X.\n", test);
     return 0;
 }

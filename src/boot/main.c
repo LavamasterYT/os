@@ -1,47 +1,24 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <kernel/memory.h>
 #include <kernel/vga.h>
 
 void kernel_main(nmap *memory, int len)
 {
-    char addr_base[16];
-    char addr_len[16];
-    char addr_acpi[16];
+    int ret = init_memory(memory, len);
 
-    vga_disable_cursor();
+    if (ret)
+        vga_write_str_at("Unable to setup memory manager!", 0, 0, VGA_BLACK, VGA_WHITE);
+
     vga_enable_cursor();
-    vga_clear();
+    vga_set_cursor_position(0, 0);
+    vga_clear(VGA_BLACK, VGA_WHITE);
+
+    char buffer[16];
+    int num = 0;
 
     for (int i = 0; i < len; i++)
-    {
-        ultoa(memory[i].base_addr, addr_base, 16);
-        ultoa(memory[i].len, addr_len, 16);
-        itoa(memory[i].acpi, addr_acpi, 16);
-
-        int c = 0;
-
-        c = vga_write_str_at("base: 0x", 0, i);
-        c = vga_write_str_at(addr_base, c, i);
-
-        c = vga_write_str_at(" | len: 0x", c, i);
-        c = vga_write_str_at(addr_len, c, i);
-
-        c = vga_write_str_at(" | type: ", c, i);
-
-        if (memory[i].type == 1)
-            c = vga_write_str_at("free | ", c, i);
-        else if (memory[i].type == 2)
-            c = vga_write_str_at("reserved | ", c, i);
-        else
-            c = vga_write_str_at("reserved | ", c, i);
-
-        c = vga_write_str_at("acpi: ", c, i);
-        vga_write_str_at(addr_acpi, c, i);
-    }
-
-    while (1)
-    {
-    }
+        printf("Base Address: %#.8llx | Length: %#.8llx\n", memory[i].base_addr, memory[i].len);
 }

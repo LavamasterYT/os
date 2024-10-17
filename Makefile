@@ -20,11 +20,14 @@ KERNEL_BIN := $(BUILD_DIR)/kernel.bin
 # Target: Build the final bootable image
 all: boot.img
 
+run:
+	qemu-system-x86_64 -fda boot.img -audiodev coreaudio,id=speaker -machine pcspk-audiodev=speaker
+
 # Rule to create boot.img by concatenating bootloader and kernel
 boot.img: $(BOOTLOADER_BIN) $(KERNEL_BIN)
 	@echo "Creating boot.img..."
 	cat $(BOOTLOADER_BIN) $(KERNEL_BIN) > boot.img
-	qemu-system-x86_64 -fda boot.img
+	qemu-system-x86_64 -fda boot.img -audiodev coreaudio,id=speaker -machine pcspk-audiodev=speaker
 
 # Rule to create the bootloader binary
 $(BOOTLOADER_BIN): $(BOOTLOADER_SRC)
